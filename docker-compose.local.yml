@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Cau hinh cho Database MySQL
+  petclinic-db:
+    image: mysql:8.0
+    container_name: petclinic-mysql-local
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=petclinic
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  petclinic-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: petclinic-app-local
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=mysql
+      - SPRING_DATASOURCE_URL=jdbc:mysql://petclinic-db:3306/petclinic?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      petclinic-db:
+        condition: service_healthy
+  
+volumes:
+  mysql_data:
