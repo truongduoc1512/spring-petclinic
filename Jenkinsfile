@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Hãy thay tên tài khoản Docker Hub thật của bạn vào đây
         DOCKER_HUB_USER = 'truongduoc'
-        AWS_SERVER_IP   = '3.25.107.33'
+        AWS_SERVER_IP   = '13.239.138.175'
     }
 
     stages {
